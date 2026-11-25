@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRUTHLENS AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #07111f;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid #1e354b;
+        }
+
+        header h1 {
+            color: #29d9e8;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .status-pill {
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid #1e354b;
+            background: #102238;
+            color: #aabaca;
+        }
+
+        .status-pill.active {
+            border-color: rgba(74, 222, 128, 0.45);
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+        }
+
+        .ghost-btn {
+            background: transparent;
+            color: #29d9e8;
+            border: 1px solid #29d9e8;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .ghost-btn:hover {
+            background: rgba(41, 217, 232, 0.12);
+        }
+
+        .key-panel {
+            max-width: 720px;
+            margin: 18px auto 0;
+            padding: 18px 22px;
+            background: #0d1d31;
+            border: 1px solid #1e354b;
+            border-radius: 14px;
+            display: none;
+        }
+
+        .key-panel.open {
+            display: block;
+        }
+
+        .key-panel h3 {
+            color: #29d9e8;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .key-panel p {
+            color: #aabaca;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .key-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .key-row input {
+            flex: 1;
+            min-width: 220px;
+            margin: 0;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #274563;
+            background: #07111f;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 55px 20px 25px;
+        }
+
+        .hero h2 {
+            font-size: 38px;
+            margin-bottom: 14px;
+        }
+
+        .hero h2 span {
+            color: #29d9e8;
+        }
+
+        .hero p {
+            color: #aabaca;
+            line-height: 1.7;
+        }
+
+        .upload-box {
+            max-width: 720px;
+            margin: 24px auto;
+            padding: 32px 25px;
+            text-align: center;
+            border: 2px dashed #29d9e8;
+            border-radius: 18px;
+            background: #102238;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #0b192b;
+            color: #aabaca;
+            border: 1px solid #1e354b;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: #18c9d9;
+            color: #07111f;
+            border-color: #18c9d9;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        input[type="file"] {
+            margin: 20px 0 12px;
+            max-width: 100%;
+        }
+
+        .text-input, textarea {
+            width: 100%;
+            background: #07111f;
+            color: #fff;
+            border: 1px solid #274563;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .preview-box {
+            margin: 12px auto 18px;
+            max-width: 100%;
+            display: none;
+        }
+
+        .preview-box img,
+        .preview-box video {
+            max-width: 100%;
+            max-height: 260px;
+            border-radius: 10px;
+            border: 1px solid #1e354b;
+        }
+
+        .preview-box audio {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .preview-text {
+            background: #07111f;
+            border: 1px solid #1e354b;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: left;
+            color: #cbd5e1;
+            font-size: 13px;
+            max-height: 140px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
+        .primary-btn {
+            background: #18c9d9;
+            color: #07111f;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #result {
+            margin-top: 25px;
+            color: #29d9e8;
+            text-align: left;
+        }
+
+        .result-card {
+            background: #0b192b;
+            border: 1px solid #1e354b;
+            border-radius: 12px;
+            padding: 20px;
+            color: #e6f1fa;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .meta-line {
+            font-size: 12px;
+            color: #8295a8;
+            margin-top: 4px;
+        }
+
+        .modality-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(41, 217, 232, 0.15);
+            color: #29d9e8;
+            font-weight: bold;
+            font-size: 11px;
+            margin-right: 6px;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .badge-low {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.4);
+        }
+
+        .badge-medium {
+            background: rgba(250, 204, 21, 0.18);
+            color: #facc15;
+            border: 1px solid rgba(250, 204, 21, 0.4);
+        }
+
+        .badge-high {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.4);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .metric {
+            background: #102238;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #aabaca;
+        }
+
+        .metric strong {
+            display: block;
+            color: #29d9e8;
+            font-size: 18px;
+            margin-top: 4px;
+        }
+
+        .summary {
+            color: #cbd5e1;
+            line-height: 1.5;
+            margin-bottom: 14px;
+            font-size: 14px;
+        }
+
+        .ai-breakdown {
+            background: #102238;
+            border-left: 3px solid #29d9e8;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #d6e4f0;
+        }
+
+        .signals {
+            list-style: none;
+            font-size: 13px;
+            color: #aabaca;
+        }
+
+        .signals li {
+            padding: 6px 0;
+            border-top: 1px solid #162b42;
+        }
+
+        .history-section {
+            max-width: 720px;
+            margin: 18px auto 30px;
+            padding: 20px 22px;
+            background: #0d1d31;
+            border: 1px solid #1e354b;
+            border-radius: 14px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-header h3 {
+            color: #29d9e8;
+            font-size: 16px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #102238;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .history-item:hover {
+            border-color: #29d9e8;
+        }
+
+        .error-text {
+            color: #f87171;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 26px;
+            color: #8295a8;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>TRUTHLENS</h1>
+        <p style="font-size:12px;color:#8295a8;">AI MEDIA VERIFICATION</p>
+    </div>
+    <div class="header-right">
+        <span id="aiStatusPill" class="status-pill">Checking AI Engine...</span>
+        <button class="ghost-btn" type="button" onclick="toggleKeyPanel()">Configure Gemini AI Key</button>
+    </div>
+</header>
+
+<section id="keyPanel" class="key-panel">
+    <h3>Connect Real Gemini Multimodal AI (Image, Video, Audio &amp; Text)</h3>
+    <p>
+        Paste your Google Gemini API key below to verify images, videos, audio clips, and text claims with live multimodal AI.
+        It is saved locally in <code>.env</code> on your machine.
+    </p>
+    <div class="key-row">
+        <input type="password" id="geminiKeyInput" placeholder="AIza... (paste your Gemini API key)">
+        <button class="primary-btn" style="padding:10px 18px;font-size:14px;" type="button" onclick="saveGeminiKey()">Save &amp; Verify</button>
+    </div>
+    <div id="keyMessage" style="margin-top:10px;font-size:13px;"></div>
+</section>
+
+<section class="hero">
+    <h2>Discover the <span>Truth</span> Behind Media</h2>
+    <p>
+        AI-powered Multimodal Fake Media Detection Platform.
+        <br>
+        Verify images, videos, audio and misleading information.
+    </p>
+</section>
+
+<section class="upload-box">
+    <div class="tabs">
+        <button id="tabFileBtn" class="tab-btn active" type="button" onclick="switchTab('file')">Image / Video / Audio / .txt</button>
+        <button id="tabTextBtn" class="tab-btn" type="button" onclick="switchTab('text')">Direct Text / News Check</button>
+    </div>
+
+    <div id="filePanel" class="tab-panel active">
+        <h2>Upload Your Media</h2>
+        <p style="color:#aabaca;margin-top:6px;">Supports Images, Videos, Audio clips, or .txt files (up to 50 MB)</p>
+
+        <input type="file" id="media" accept="image/*,video/*,audio/*,.txt" onchange="previewSelectedMedia()">
+        <div id="mediaPreview" class="preview-box"></div>
+
+        <br>
+        <button id="analyzeBtn" class="primary-btn" onclick="analyzeMedia()">Analyze Media</button>
+    </div>
+
+    <div id="textPanel" class="tab-panel">
+        <h2>Verify Text or News Claim</h2>
+        <p style="color:#aabaca;margin:6px 0 14px;">Paste any viral forward, article excerpt, or suspicious claim</p>
+
+        <input type="text" id="textTitle" class="text-input" placeholder="Optional headline or label (e.g. WhatsApp Forward)">
+        <textarea id="textContent" placeholder="Paste the text or claim here to verify..."></textarea>
+
+        <button id="analyzeTextBtn" class="primary-btn" onclick="analyzeTextInput()">Verify Text</button>
+    </div>
+
+    <div id="result"></div>
+</section>
+
+<section class="history-section">
+    <div class="history-header">
+        <h3>Recent Verifications</h3>
+        <button class="ghost-btn" type="button" onclick="clearHistory()">Clear</button>
+    </div>
+    <div id="historyList" class="history-list">
+        <p style="color:#8295a8;font-size:13px;">No scans yet.</p>
+    </div>
+</section>
+
+<footer>
+    TRUTHLENS AI | Multimodal Fake Media Detection
+</footer>
+
+<script>
+const API_BASE = window.location.protocol === "file:" ? "http://localhost:3000" : "";
+let previewObjectUrl = null;
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+function getBadgeClass(risk) {
+    if (risk >= 65) return "badge badge-high";
+    if (risk >= 35) return "badge badge-medium";
+    return "badge badge-low";
+}
+
+function switchTab(tab) {
+    const isFile = tab === "file";
+    document.getElementById("tabFileBtn").classList.toggle("active", isFile);
+    document.getElementById("tabTextBtn").classList.toggle("active", !isFile);
+    document.getElementById("filePanel").classList.toggle("active", isFile);
+    document.getElementById("textPanel").classList.toggle("active", !isFile);
+}
+
+function toggleKeyPanel() {
+    document.getElementById("keyPanel").classList.toggle("open");
+}
+
+async function refreshHealth() {
+    const pill = document.getElementById("aiStatusPill");
+    try {
+        const res = await fetch(`${API_BASE}/api/health`);
+        const data = await res.json();
+        if (data.geminiConfigured) {
+            pill.className = "status-pill active";
+            pill.innerText = `AI Active: ${data.geminiModel} (${data.geminiKeyHint})`;
+        } else {
+            pill.className = "status-pill";
+            pill.innerText = "Local Forensics Mode (No AI Key)";
+        }
+    } catch {
+        pill.className = "status-pill";
+        pill.innerText = "Backend Offline";
+    }
+}
+
+async function saveGeminiKey() {
+    const input = document.getElementById("geminiKeyInput");
+    const msg = document.getElementById("keyMessage");
+    const apiKey = input.value.trim();
+
+    msg.style.color = "#29d9e8";
+    msg.innerText = "Validating key with Gemini API...";
+
+    try {
+        const res = await fetch(`${API_BASE}/api/config/gemini-key`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ apiKey })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.error || "Failed to save API key.");
+        }
+
+        msg.style.color = "#4ade80";
+        msg.innerText = data.geminiConfigured
+            ? "Gemini AI key verified and saved! Image, Video, Audio & Text AI verification is now active."
+            : "API key cleared. Switched to Local Forensics mode.";
+        input.value = "";
+        await refreshHealth();
+    } catch (err) {
+        msg.style.color = "#f87171";
+        msg.innerText = err.message;
+    }
+}
+
+function previewSelectedMedia() {
+    const file = document.getElementById("media").files[0];
+    const previewBox = document.getElementById("mediaPreview");
+
+    if (previewObjectUrl) {
+        URL.revokeObjectURL(previewObjectUrl);
+        previewObjectUrl = null;
+    }
+
+    if (!file) {
+        previewBox.style.display = "none";
+        previewBox.innerHTML = "";
+        return;
+    }
+
+    previewBox.style.display = "block";
+    previewObjectUrl = URL.createObjectURL(file);
+
+    if (file.type.startsWith("image/")) {
+        previewBox.innerHTML = `<img src="${previewObjectUrl}" alt="Selected image preview">`;
+    } else if (file.type.startsWith("video/")) {
+        previewBox.innerHTML = `<video src="${previewObjectUrl}" controls></video>`;
+    } else if (file.type.startsWith("audio/")) {
+        previewBox.innerHTML = `<audio src="${previewObjectUrl}" controls></audio>`;
+    } else if (file.name.toLowerCase().endsWith(".txt") || file.type.startsWith("text/")) {
+        file.text().then((txt) => {
+            previewBox.innerHTML = `<div class="preview-text">${escapeHtml(txt.slice(0, 800))}</div>`;
+        });
+    } else {
+        previewBox.innerHTML = `<p style="color:#aabaca;font-size:13px;">Selected: ${escapeHtml(file.name)}</p>`;
+    }
+}
+
+function renderReport(data) {
+    const resultEl = document.getElementById("result");
+    const signalsHtml = (data.signals || [])
+        .map((signal) => `<li><strong>[${escapeHtml((signal.severity || "info").toUpperCase())}]</strong> ${escapeHtml(signal.detail)}</li>`)
+        .join("");
+
+    const breakdown = data.modalityAnalysis
+        ? `<div class="ai-breakdown">
+                <div><strong>AI Modality Finding:</strong> ${escapeHtml(data.modalityAnalysis.primaryCheck || "")}</div>
+                <div><strong>AI Generation Likelihood:</strong> ${escapeHtml(data.modalityAnalysis.aiGenerationLikelihood || "N/A")}</div>
+                <div><strong>Recommended Action:</strong> ${escapeHtml(data.modalityAnalysis.recommendedAction || "")}</div>
+           </div>`
+        : "";
+
+    resultEl.innerHTML = `
+        <div class="result-card">
+            <div class="result-header">
+                <div>
+                    <div style="font-size:15px;font-weight:bold;color:#fff;">
+                        <span class="modality-tag">${escapeHtml((data.file?.category || "media").toUpperCase())}</span>
+                        ${escapeHtml(data.file?.name || "Report")}
+                    </div>
+                    <div class="meta-line">${escapeHtml(data.file?.detectedType || "")} • Mode: ${escapeHtml(data.mode)}${data.model ? ` (${escapeHtml(data.model)})` : ""}</div>
+                </div>
+                <span class="${getBadgeClass(data.manipulationRisk)}">${escapeHtml(data.verdict)}</span>
+            </div>
+            <div class="metrics">
+                <div class="metric">Authenticity Score<strong>${data.authenticityScore}%</strong></div>
+                <div class="metric">Manipulation Risk<strong>${data.manipulationRisk}%</strong></div>
+                <div class="metric">SHA-256 Prefix<strong style="font-size:13px;">${escapeHtml((data.file?.sha256 || "").slice(0, 12))}...</strong></div>
+            </div>
+            <p class="summary">${escapeHtml(data.summary)}</p>
+            ${breakdown}
+            <ul class="signals">${signalsHtml}</ul>
+        </div>
+    `;
+}
+
+async function analyzeMedia() {
+    const fileInput = document.getElementById("media");
+    const resultEl = document.getElementById("result");
+    const buttonEl = document.getElementById("analyzeBtn");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        resultEl.innerHTML = '<p class="error-text">Please upload a media file first.</p>';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("media", file);
+
+    buttonEl.disabled = true;
+    buttonEl.innerText = "Analyzing...";
+    resultEl.innerHTML = '<p style="text-align:center;">Running multimodal verification checks...</p>';
+
+    try {
+        const response = await fetch(`${API_BASE}/api/analyze`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || "Analysis failed.");
+        }
+
+        renderReport(data);
+        await loadHistory();
+    } catch (error) {
+        resultEl.innerHTML = `<p class="error-text">Error: ${escapeHtml(error.message)}</p>`;
+    } finally {
+        buttonEl.disabled = false;
+        buttonEl.innerText = "Analyze Media";
+    }
+}
+
+async function analyzeTextInput() {
+    const title = document.getElementById("textTitle").value.trim();
+    const text = document.getElementById("textContent").value.trim();
+    const resultEl = document.getElementById("result");
+    const buttonEl = document.getElementById("analyzeTextBtn");
+
+    if (!text) {
+        resultEl.innerHTML = '<p class="error-text">Please enter or paste text to verify.</p>';
+        return;
+    }
+
+    buttonEl.disabled = true;
+    buttonEl.innerText = "Verifying...";
+    resultEl.innerHTML = '<p style="text-align:center;">Running text verification...</p>';
+
+    try {
+        const response = await fetch(`${API_BASE}/api/analyze-text`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, text })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || "Text verification failed.");
+        }
+
+        renderReport(data);
+        await loadHistory();
+    } catch (error) {
+        resultEl.innerHTML = `<p class="error-text">Error: ${escapeHtml(error.message)}</p>`;
+    } finally {
+        buttonEl.disabled = false;
+        buttonEl.innerText = "Verify Text";
+    }
+}
+
+async function loadHistory() {
+    const listEl = document.getElementById("historyList");
+    try {
+        const res = await fetch(`${API_BASE}/api/history`);
+        const data = await res.json();
+        if (!data.items || data.items.length === 0) {
+            listEl.innerHTML = '<p style="color:#8295a8;font-size:13px;">No scans yet.</p>';
+            return;
+        }
+
+        listEl.innerHTML = data.items
+            .slice(0, 10)
+            .map((item) => `
+                <div class="history-item" onclick="viewReport('${escapeHtml(item.id)}')">
+                    <div>
+                        <span class="modality-tag">${escapeHtml((item.file?.category || "media").toUpperCase())}</span>
+                        <strong style="font-size:14px;">${escapeHtml(item.file?.name || "Scan")}</strong>
+                        <div style="font-size:11px;color:#8295a8;margin-top:3px;">${escapeHtml(item.mode)} • ${new Date(item.analyzedAt).toLocaleString()}</div>
+                    </div>
+                    <span class="${getBadgeClass(item.manipulationRisk)}">${item.authenticityScore}% Auth</span>
+                </div>
+            `)
+            .join("");
+    } catch {
+        listEl.innerHTML = '<p style="color:#8295a8;font-size:13px;">Unable to load history.</p>';
+    }
+}
+
+async function viewReport(id) {
+    try {
+        const res = await fetch(`${API_BASE}/api/reports/${encodeURIComponent(id)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        renderReport(data);
+        document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+    } catch {
+        // Ignore click error
+    }
+}
+
+async function clearHistory() {
+    await fetch(`${API_BASE}/api/history`, { method: "DELETE" });
+    await loadHistory();
+}
+
+refreshHealth();
+loadHistory();
+</script>
+
+</body>
+</html>
